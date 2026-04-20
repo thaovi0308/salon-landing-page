@@ -76,7 +76,7 @@
     <div class="relative z-10 text-center px-4 max-w-3xl fade-in">
       <p class="text-primary-light text-xs uppercase tracking-[6px] mb-6 font-medium">Premium Beauty & Wellness</p>
       <h1 class="font-serif text-4xl sm:text-5xl md:text-7xl font-light text-white leading-[1.15] mb-6 tracking-wide">
-        Reveal Your<br />Most Radiant Self
+        Walk In Stressed,<br />Walk Out Glowing
       </h1>
       <p class="text-white/70 text-base sm:text-lg mb-4 max-w-lg mx-auto font-light leading-relaxed">
         Indulge in transformative treatments designed to restore your natural glow and inner peace.
@@ -471,8 +471,16 @@
     </div>
   </footer>
 
-  <!-- SCROLL ANIMATIONS -->
+  <!-- STICKY MOBILE CTA -->
+  <div id="mobile-cta" class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-nude-dark/20 p-3 z-50 md:hidden translate-y-full transition-transform duration-300">
+    <a href="#contact" class="block w-full bg-primary text-white text-center py-3 rounded-xl font-medium text-sm uppercase tracking-[1px] hover:bg-primary-dark transition-colors cta-pulse">
+      Book Free Consultation
+    </a>
+  </div>
+
+  <!-- SCROLL ANIMATIONS + MOBILE CTA + FORM VALIDATION -->
   <script>
+    // Scroll animations
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -481,6 +489,61 @@
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
     document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .scale-in').forEach(el => observer.observe(el));
+
+    // Show sticky mobile CTA after scrolling past hero
+    const mobileCta = document.getElementById('mobile-cta');
+    const heroSection = document.querySelector('section');
+    const heroObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          mobileCta.classList.remove('translate-y-full');
+        } else {
+          mobileCta.classList.add('translate-y-full');
+        }
+      });
+    }, { threshold: 0.1 });
+    heroObserver.observe(heroSection);
+
+    // Enhanced button hover feedback
+    document.querySelectorAll('.service-card a, footer a, nav a').forEach(el => {
+      el.addEventListener('mouseenter', () => el.style.transition = 'all 0.3s ease');
+    });
+
+    // Form validation
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const inputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]');
+        let valid = true;
+
+        inputs.forEach(input => {
+          input.classList.remove('border-red-300', 'border-green-300');
+          if (!input.value.trim()) {
+            input.classList.add('border-red-300');
+            valid = false;
+          } else {
+            input.classList.add('border-green-300');
+          }
+        });
+
+        const email = form.querySelector('input[type="email"]');
+        if (email && email.value && !email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+          email.classList.remove('border-green-300');
+          email.classList.add('border-red-300');
+          valid = false;
+        }
+
+        if (valid) {
+          const btn = form.querySelector('button');
+          btn.textContent = 'Thank You! We\'ll Contact You Soon';
+          btn.classList.remove('bg-primary');
+          btn.classList.add('bg-green-600');
+          btn.disabled = true;
+          form.querySelectorAll('input, select, textarea').forEach(el => el.disabled = true);
+        }
+      });
+    }
   </script>
 
 </body>
